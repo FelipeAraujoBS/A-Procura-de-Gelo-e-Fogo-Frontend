@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Search Frontend
 
-## Getting Started
+Frontend Next.js para sistema de busca de livros, com filtros por livro e personagem (POV).
 
-First, run the development server:
+## Tecnologias
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Next.js** 16.2.6
+- **React** 19.2.4
+- **Tailwind CSS** 4
+- **Radix UI** (Dialog, Select)
+- **Framer Motion** (animações)
+- **Lucide React** (ícones)
+
+## Estrutura
+
+```
+├── app/                    # Páginas e layout Next.js
+├── components/
+│   ├── filters/           # Filtros de busca
+│   ├── hero/              # Hero section com busca
+│   ├── modal/             # Modal de capítulo
+│   ├── results/           # Lista de resultados
+│   ├── search/            # Componentes de busca
+│   └── theme/             # Toggle de tema e navbar
+├── hooks/                 # Custom hooks (useSearch, useTheme)
+├── services/              # Integração com API
+└── types/                 # TypeScript types
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Configuração
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Crie um arquivo `.env.local` com a URL da API:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000
+```
 
-## Learn More
+## Scripts
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run dev      # Iniciar servidor de desenvolvimento
+npm run build   # Build de produção
+npm run start   # Iniciar servidor de produção
+npm run lint    # Verificar código
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Funcionalidades
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Busca por texto em livros
+- Filtros por livro e personagem (POV)
+- Paginação com "load more"
+- Modal de visualização de capítulos
+- Theme toggle (claro/escuro)
+- Animações com Framer Motion
