@@ -21,6 +21,7 @@ interface FiltersProps {
 
 export function Filters({ book, onBookChange, pov, onPovChange }: FiltersProps) {
   const [povs, setPovs] = useState<string[]>([]);
+  const safePovs = Array.isArray(povs) ? povs : [];
 
   useEffect(() => {
     getPovs()
@@ -32,12 +33,12 @@ export function Filters({ book, onBookChange, pov, onPovChange }: FiltersProps) 
     <div className="flex flex-wrap gap-4 items-center justify-center py-6 px-4">
       <div className="flex items-center gap-2">
         <span className="text-sm text-muted font-body">Livro:</span>
-        <Select value={book} onValueChange={onBookChange}>
+        <Select value={book} onValueChange={(v) => onBookChange(v === 'all' ? '' : v)}>
           <SelectTrigger className="w-48" aria-label="Selecionar livro">
             <SelectValue placeholder="Todos os livros" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Todos os livros</SelectItem>
+            <SelectItem value="all">Todos os livros</SelectItem>
             {BOOKS.map((b) => (
               <SelectItem key={b.id} value={b.id}>
                 {b.name}
@@ -49,13 +50,13 @@ export function Filters({ book, onBookChange, pov, onPovChange }: FiltersProps) 
 
       <div className="flex items-center gap-2">
         <span className="text-sm text-muted font-body">POV:</span>
-        <Select value={pov} onValueChange={onPovChange}>
+        <Select value={pov} onValueChange={(v) => onPovChange(v === 'all' ? '' : v)}>
           <SelectTrigger className="w-48" aria-label="Selecionar POV">
             <SelectValue placeholder="Todos os POVs" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Todos os POVs</SelectItem>
-            {povs.map((p) => (
+            <SelectItem value="all">Todos os POVs</SelectItem>
+            {safePovs.map((p) => (
               <SelectItem key={p} value={p}>
                 {p}
               </SelectItem>

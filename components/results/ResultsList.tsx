@@ -23,7 +23,9 @@ export function ResultsList({
   onLoadMore,
   onResultClick,
 }: ResultsListProps) {
-  if (results.length === 0 && !isLoading) {
+  const safeResults = Array.isArray(results) ? results : [];
+
+  if (safeResults.length === 0 && !isLoading) {
     return null;
   }
 
@@ -40,7 +42,7 @@ export function ResultsList({
       </motion.div>
 
       <div className="space-y-4">
-        {results.map((result, index) => (
+        {safeResults.map((result, index) => (
           <ResultCard
             key={`${result.book_number}-${result.chapter_number}-${result.paragraph_index}`}
             result={result}

@@ -108,14 +108,14 @@ export function ChapterModal({ result, isOpen, onClose }: ChapterModalProps) {
                   <p className="text-center text-muted py-12">{error}</p>
                 ) : chapter ? (
                   <div className="space-y-4 font-body text-text leading-relaxed">
-                    {chapter.paragraphs.map((paragraph, idx) => (
+                    {Array.isArray(chapter.paragraphs) ? chapter.paragraphs.map((paragraph, idx) => (
                       <p 
                         key={idx}
                         className={idx === result.paragraph_index ? 'bg-accent/10 rounded p-2 -mx-2' : ''}
                       >
                         {paragraph.text}
                       </p>
-                    ))}
+                    )) : null}
                   </div>
                 ) : (
                   <p className="text-center text-muted py-12">

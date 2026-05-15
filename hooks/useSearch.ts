@@ -62,14 +62,16 @@ export function useSearch(): UseSearchReturn {
 
       const response = await search(params);
       
+      const results = Array.isArray(response.results) ? response.results : [];
+      
       if (resetResults) {
-        setResults(response.results);
-        setOffset(response.results.length);
+        setResults(results);
+        setOffset(results.length);
       } else {
-        setResults(prev => [...prev, ...response.results]);
-        setOffset(prev => prev + response.results.length);
+        setResults(prev => [...prev, ...results]);
+        setOffset(prev => prev + results.length);
       }
-      setTotal(response.total);
+      setTotal(response.total ?? 0);
       setHasSearched(true);
       setCurrentQuery(q);
     } catch (error) {
