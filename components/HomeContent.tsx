@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { SearchBar } from "@/components/search/SearchBar";
 import { Filters } from "@/components/filters/Filters";
 import { ResultsList } from "@/components/results/ResultsList";
+import { PovFilterBar } from "@/components/filters/PovFilterBar";
 import { useSearch } from "@/hooks/useSearch";
 import type { SearchResult } from "@/types";
 import { Loader2 } from "lucide-react";
@@ -106,6 +107,19 @@ export function HomeContent() {
               inputRef={searchInputRef}
             />
           </div>
+        </div>
+
+        {/* POV Filter Bar (Always Visible) */}
+        <div className="pov-filter-section">
+          <PovFilterBar
+            selectedPovs={povs}
+            onPovChange={(newPovs) => {
+              setPovs(newPovs);
+              if (query && hasSearched) {
+                handleSearch();
+              }
+            }}
+          />
         </div>
 
         {/* Suggestions */}

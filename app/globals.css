@@ -214,11 +214,16 @@ input::placeholder, textarea::placeholder {
 /* Search Section */
 .search-section {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 16px;
   animation: fadeIn 0.6s ease-out 0.1s both;
 }
 
 .search-container {
+  margin-bottom: 16px;
+}
+
+/* POV Filter Section */
+.pov-filter-section {
   margin-bottom: 24px;
 }
 
@@ -292,6 +297,174 @@ input::placeholder, textarea::placeholder {
   margin: 32px 0;
   padding: 16px 0;
   animation: fadeIn 0.4s ease-out;
+}
+
+/* ========================================
+   POV FILTER BAR (Collapsible)
+   ======================================== */
+
+.pov-filter-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 0;
+  animation: fadeIn 0.5s ease-out 0.15s both;
+}
+
+.pov-filter-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-meta);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: 0 auto;
+}
+
+.pov-filter-header:hover {
+  background: var(--surface);
+  color: var(--text-secondary);
+}
+
+.pov-filter-title {
+  font-family: var(--font-serif);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: none;
+}
+
+.pov-filter-arrow {
+  font-size: 8px;
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+}
+
+.pov-filter-arrow.expanded {
+  transform: rotate(180deg);
+}
+
+.pov-chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  padding: 8px 0;
+  animation: slideUp 0.2s ease-out;
+}
+
+.pov-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--border-soft);
+  border-radius: 100px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: var(--surface);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pov-chip:hover {
+  border-color: var(--accent);
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.pov-chip.selected {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--surface);
+}
+
+.pov-chip.selected:hover {
+  background: var(--accent-dim);
+  color: var(--surface);
+}
+
+.pov-chip-name {
+  font-weight: 500;
+}
+
+.pov-chip-count {
+  font-size: 10px;
+  opacity: 0.7;
+  padding: 1px 5px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.pov-chip.selected .pov-chip-count {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.selected-povs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+
+.selected-pov-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--accent);
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent);
+  background: var(--accent-light);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.selected-pov-tag:hover {
+  background: var(--accent-subtle);
+}
+
+.remove-icon {
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.clear-all-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: transparent;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.clear-all-btn:hover {
+  color: var(--text-primary);
+}
+
+/* Responsive - mantém layout fluido */
+@media (max-width: 640px) {
+  .pov-chips-container {
+    max-width: 100% !important;
+  }
 }
 
 /* Results Section */
