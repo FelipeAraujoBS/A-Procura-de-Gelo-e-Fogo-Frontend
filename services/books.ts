@@ -14,5 +14,17 @@ export async function getChapter(bookId: number, chapterNumber: number): Promise
 }
 
 export async function getPovs(): Promise<string[]> {
-  return fetchApi<string[]>('/povs');
+  const response = await fetchApi<{ povs: Array<{ pov: string; chapter_count: number }> }>('/povs');
+  return response.povs.map(p => p.pov);
+}
+
+export interface PovWithCount {
+  pov: string;
+  chapter_count: number;
+  book_count?: number;
+}
+
+export async function getPovsWithCounts(): Promise<PovWithCount[]> {
+  const response = await fetchApi<{ povs: PovWithCount[] }>('/povs');
+  return response.povs;
 }

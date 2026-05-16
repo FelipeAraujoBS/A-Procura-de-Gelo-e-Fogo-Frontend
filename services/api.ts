@@ -17,3 +17,9 @@ export async function fetchApi<T>(endpoint: string, options?: RequestInit): Prom
 
   return response.json();
 }
+
+export function fetchContext(book: number, chapter: number, index: number) {
+  return fetchApi<{ paragraphs: Array<{ paragraph_index: number; text: string }> }>(
+    `/context?book=${book}&chapter=${chapter}&index=${index}`
+  );
+}

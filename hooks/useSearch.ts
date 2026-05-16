@@ -10,8 +10,8 @@ interface UseSearchReturn {
   setQuery: (q: string) => void;
   book: string;
   setBook: (b: string) => void;
-  pov: string;
-  setPov: (p: string) => void;
+  povs: string[];
+  setPovs: (p: string[]) => void;
   results: SearchResult[];
   total: number;
   isLoading: boolean;
@@ -27,7 +27,7 @@ export function useSearch(): UseSearchReturn {
 
   const [query, setQuery] = useState(searchParams.get('q') || '');
   const [book, setBook] = useState(searchParams.get('book') || '');
-  const [pov, setPov] = useState(searchParams.get('pov') || '');
+  const [povs, setPovs] = useState<string[]>([]);
   const [results, setResults] = useState<SearchResult[]>([]);
   const [total, setTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -38,16 +38,16 @@ export function useSearch(): UseSearchReturn {
   const limit = 10;
   const hasMore = results.length < total;
 
-  const updateURL = useCallback((q: string, b: string, p: string) => {
+  const updateURL = useCallback((q: string, b: string, p: string[]) => {
     const params = new URLSearchParams();
     if (q) params.set('q', q);
     if (b) params.set('book', b);
-    if (p) params.set('pov', p);
+    if (p.length > 0) params.set('povs', p.join(','));
     const queryString = params.toString();
     router.push(queryString ? `?${queryString}` : '/', { scroll: false });
   }, [router]);
 
-  const performSearch = useCallback(async (q: string, b: string, p: string, resetResults = true) => {
+  const performSearch = useCallback(async (q: string, b: string, p: string[], resetResults = true) => {
     if (!q.trim()) return;
 
     setIsLoading(true);
@@ -58,7 +58,7 @@ export function useSearch(): UseSearchReturn {
         offset: resetResults ? 0 : offset,
       };
       if (b) params.book = b;
-      if (p) params.pov = p;
+      if (p.length > 0) params.povs = p;
 
       const response = await search(params);
       
@@ -83,25 +83,25 @@ export function useSearch(): UseSearchReturn {
 
   const executeSearch = useCallback(async () => {
     setOffset(0);
-    await performSearch(query, book, pov, true);
-    updateURL(query, book, pov);
-  }, [query, book, pov, performSearch, updateURL]);
+    await performSearch(query, book, povs, true);
+    updateURL(query, book, povs);
+  }, [query, book, povs, performSearch, updateURL]);
 
   const loadMore = useCallback(async () => {
     if (isLoading || !hasMore) return;
-    await performSearch(currentQuery, book, pov, false);
-  }, [isLoading, hasMore, currentQuery, book, pov, performSearch]);
+    await performSearch(currentQuery, book, povs, false);
+  }, [isLoading, hasMore, currentQuery, book, povs, performSearch]);
 
   useEffect(() => {
     const q = searchParams.get('q');
     const b = searchParams.get('book');
-    const p = searchParams.get('pov');
+    const p = searchParams.get('povs');
     
     if (q) {
       setQuery(q);
       setBook(b || '');
-      setPov(p || '');
-      performSearch(q, b || '', p || '', true);
+      setPovs(p ? p.split(',') : []);
+      performSearch(q, b || '', p ? p.split(',') : [], true);
     }
   }, []);
 
@@ -110,8 +110,8 @@ export function useSearch(): UseSearchReturn {
     setQuery,
     book,
     setBook,
-    pov,
-    setPov,
+    povs,
+    setPovs,
     results,
     total,
     isLoading,

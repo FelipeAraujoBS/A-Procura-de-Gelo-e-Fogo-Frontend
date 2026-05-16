@@ -39,7 +39,7 @@ export interface Paragraph {
 export interface SearchParams {
   q?: string;
   book?: string;
-  pov?: string;
+  povs?: string[];
   limit?: number;
   offset?: number;
 }

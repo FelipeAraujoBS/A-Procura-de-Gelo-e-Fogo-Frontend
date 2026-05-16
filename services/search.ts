@@ -6,7 +6,9 @@ export async function search(params: SearchParams): Promise<SearchResponse> {
   
   if (params.q) searchParams.set('q', params.q);
   if (params.book) searchParams.set('book', params.book);
-  if (params.pov) searchParams.set('pov', params.pov);
+  if (params.povs && params.povs.length > 0) {
+    searchParams.set('povs', params.povs.join(','));
+  }
   if (params.limit) searchParams.set('limit', params.limit.toString());
   if (params.offset) searchParams.set('offset', params.offset.toString());
 
