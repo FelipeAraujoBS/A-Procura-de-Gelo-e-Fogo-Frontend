@@ -129,16 +129,6 @@ function ContextPanel({ result, query }: { result: SearchResult; query: string }
           />
         )}
       </div>
-
-      <div className="context-footer">
-        <a 
-          href={`/livro/${result.book_number}/capitulo/${result.chapter_number}`}
-          className="context-cta"
-        >
-          <span>Ler capítulo completo</span>
-          <ChevronDown className="h-3.5 w-3.5" />
-        </a>
-      </div>
     </div>
   );
 }
