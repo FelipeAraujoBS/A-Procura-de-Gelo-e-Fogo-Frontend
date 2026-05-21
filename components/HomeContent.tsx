@@ -28,7 +28,9 @@ const FOOTER_LINKS = [
 export function HomeContent() {
   const [mounted, setMounted] = useState(false);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [shouldScroll, setShouldScroll] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   const {
     query,
@@ -50,10 +52,18 @@ export function HomeContent() {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (shouldScroll && hasSearched && results.length > 0 && resultsRef.current) {
+      resultsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      setShouldScroll(false);
+    }
+  }, [hasSearched, results, shouldScroll]);
+
   const handleSearch = (searchQuery?: string) => {
     const q = searchQuery || query;
     if (q.trim()) {
       setQuery(q);
+      setShouldScroll(true);
       executeSearch();
     }
   };
@@ -61,7 +71,7 @@ export function HomeContent() {
   const handleSuggestionClick = (suggestion: string) => {
     const cleanSuggestion = suggestion.replace(/"/g, "");
     setQuery(cleanSuggestion);
-    handleSearch(cleanSuggestion);
+    executeSearch();
     setTimeout(() => {
       searchInputRef.current?.focus();
     }, 100);
@@ -159,19 +169,21 @@ export function HomeContent() {
 
         {/* Results */}
         {hasSearched && (
-          <ResultsList
-            results={results}
-            total={total}
-            isLoading={isLoading}
-            hasMore={hasMore}
-            onLoadMore={loadMore}
-            query={query}
-            openIndex={openIndex}
-            onResultClick={(idx) =>
-              setOpenIndex(openIndex === idx ? null : idx)
-            }
-            onPovClick={addPovFilter}
-          />
+          <div ref={resultsRef}>
+            <ResultsList
+              results={results}
+              total={total}
+              isLoading={isLoading}
+              hasMore={hasMore}
+              onLoadMore={loadMore}
+              query={query}
+              openIndex={openIndex}
+              onResultClick={(idx) =>
+                setOpenIndex(openIndex === idx ? null : idx)
+              }
+              onPovClick={addPovFilter}
+            />
+          </div>
         )}
 
         {/* Footer */}

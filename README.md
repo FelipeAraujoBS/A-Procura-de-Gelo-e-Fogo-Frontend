@@ -17,7 +17,6 @@ Frontend Next.js para sistema de busca de livros, com filtros por livro e person
 ├── app/                    # Páginas e layout Next.js
 ├── components/
 │   ├── filters/           # Filtros de busca
-│   ├── hero/              # Hero section com busca
 │   ├── modal/             # Modal de capítulo
 │   ├── results/           # Lista de resultados
 │   ├── search/            # Componentes de busca
@@ -52,3 +51,46 @@ npm run lint    # Verificar código
 - Modal de visualização de capítulos
 - Theme toggle (claro/escuro)
 - Animações com Framer Motion
+
+## Deploy
+
+### Vercel (Recomendado)
+
+1. Conecte o repositório à Vercel
+2. Defina o diretório raiz como `A-Procura-de-Gelo-e-Fogo-Frontend`
+3. Adicione a variável de ambiente:
+   - `NEXT_PUBLIC_API_URL=https://backend-url.com`
+4. Deploy automático a cada push na `main`
+
+```bash
+# Ou via CLI
+vercel --prod
+```
+
+### Docker
+
+```bash
+docker build -t search-frontend .
+docker run -p 3000:3000 \
+  -e NEXT_PUBLIC_API_URL=https://backend-url.com \
+  search-frontend
+```
+
+### Railway
+
+1. Conecte o repositório ao Railway
+2. Defina o diretório raiz como `A-Procura-de-Gelo-e-Fogo-Frontend`
+3. Adicione a variável de ambiente:
+   - `NEXT_PUBLIC_API_URL=https://backend-url.com`
+
+### VPS com Docker Compose
+
+Veja `docker-compose.yml` na raiz do projeto para subir backend + frontend juntos.
+
+## CI/CD
+
+Este projeto usa GitHub Actions para:
+- Rodar lint e build automaticamente em cada PR
+- Validar que o código está pronto para deploy
+
+O workflow é disparado quando há mudanças em `A-Procura-de-Gelo-e-Fogo-Frontend/`.
