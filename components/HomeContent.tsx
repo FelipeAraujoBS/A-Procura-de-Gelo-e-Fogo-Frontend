@@ -196,7 +196,7 @@ export function HomeContent() {
             ))}
           </div>
           <p className="footer-credit">
-            Uma Procura de Gelo e Fogo — Arquivo dos Maesters — Criado por <a href="https://github.com/FelipeAraujoBS" className="footer-credit-link" target="_blank" rel="noopener noreferrer">
+            Uma Busca de Gelo e Fogo — Arquivo dos Maesters — Criado por <a href="https://github.com/FelipeAraujoBS" className="footer-credit-link" target="_blank" rel="noopener noreferrer">
               FelipeAraujoBS
             </a>
           </p>

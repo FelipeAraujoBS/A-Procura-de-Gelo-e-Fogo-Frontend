@@ -17,7 +17,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Uma Procura de Gelo e Fogo",
+  title: "Uma Busca de Gelo e Fogo",
   description: "Explore personagens, batalhas, profecias e segredos escondido nas Crônicas de Gelo e Fogo.",
 };
 
