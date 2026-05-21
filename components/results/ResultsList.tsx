@@ -199,7 +199,16 @@ export function ResultsList({
   const safeResults = Array.isArray(results) ? results : [];
 
   if (safeResults.length === 0 && !isLoading) {
-    return null;
+    return (
+      <div className="results-container text-center py-16">
+        <p className="font-serif text-2xl text-[var(--text-primary)] mb-3">
+          Nenhum resultado encontrado
+        </p>
+        <p className="font-sans text-[var(--text-muted)] text-sm leading-relaxed max-w-sm mx-auto">
+          Não encontramos nenhum trecho correspondente à sua busca. Tente outros termos ou ajuste os filtros.
+        </p>
+      </div>
+    );
   }
 
   return (
