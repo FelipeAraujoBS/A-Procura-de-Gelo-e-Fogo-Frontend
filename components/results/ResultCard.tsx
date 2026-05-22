@@ -42,7 +42,7 @@ export function ResultCard({ result, onClick, index }: ResultCardProps) {
         
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted font-body pt-2 border-t border-borders/30">
           <span className="text-accent font-medium">
-            — {result.pov}
+            — {result.chapter_title}
           </span>
           <span className="text-muted/60">
             {BOOK_NAMES[result.book_number] || result.book_title}

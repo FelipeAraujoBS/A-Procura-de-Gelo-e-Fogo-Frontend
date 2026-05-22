@@ -99,7 +99,7 @@ function ContextPanel({ result, query }: { result: SearchResult; query: string }
   return (
     <div className="context-panel animate-slide-up">
       <div className="context-header">
-        <p className="context-pov">{result.pov}</p>
+        <p className="context-pov">{result.chapter_title}</p>
         <p className="context-meta">
           {BOOK_NAMES[result.book_number] || result.book_title} — Capítulo {result.chapter_number}
         </p>
@@ -168,7 +168,7 @@ function ResultItem({
               onClick={(e) => { e.stopPropagation(); onPovClick(result.pov); }}
               className="result-pov"
             >
-              {result.pov}
+              {result.chapter_title}
             </button>
             <span className="result-divider">—</span>
             <span>{BOOK_NAMES[result.book_number] || result.book_title}</span>
