@@ -1,139 +1,309 @@
-# Search Frontend
+# Uma Busca de Gelo e Fogo — Frontend
 
-Frontend Next.js para sistema de busca de livros, com filtros por livro e personagem (POV).
+**Interface de busca temática** para *As Crônicas de Gelo e Fogo*. Experiência imersiva com tema medieval, animações cinematográficas, busca instantânea e exploração contextual dos livros.
 
-## Tecnologias
+> ⚔️ Vitrine de arquitetura frontend: SSR + CSR híbrido, estado sincronizado com URL, componentização granular, tema claro/escuro, acessibilidade.
 
-- **Next.js** 16.2.6
-- **React** 19.2.4
-- **Tailwind CSS** 4
-- **Radix UI** (Dialog, Select)
-- **Framer Motion** (animações)
-- **Lucide React** (ícones)
+---
 
-## Estrutura
+## Índice
+
+- [Arquitetura](#arquitetura)
+- [Fluxo de Dados](#fluxo-de-dados)
+- [Componentes](#componentes)
+- [Performance](#performance)
+- [Tematização](#tematização)
+- [Analytics & Error Tracking](#analytics--error-tracking)
+- [Acessibilidade](#acessibilidade)
+- [Deploy & CI/CD](#deploy--cicd)
+
+---
+
+## Arquitetura
 
 ```
-├── app/                    # Páginas e layout Next.js
-├── components/
-│   ├── filters/           # Filtros de busca
-│   ├── modal/             # Modal de capítulo
-│   ├── results/           # Lista de resultados
-│   ├── search/            # Componentes de busca
-│   └── theme/             # Toggle de tema e navbar
-├── hooks/                 # Custom hooks (useSearch, useTheme)
-├── services/              # Integração com API
-└── types/                 # TypeScript types
+┌─────────────────────────────────────────────────────────┐
+│                      Next.js 16                         │
+│  ┌──────────────────────────────────────────────────┐   │
+│  │              App Router (SSR/SSG)                │   │
+│  │  layout.tsx ← globals.css ← Providers.tsx        │   │
+│  │  page.tsx  ← HomeContent.tsx ← Suspense          │   │
+│  └──────────────────────┬───────────────────────────┘   │
+│                         │                                │
+│  ┌──────────────────────▼───────────────────────────┐   │
+│  │              Client Components                    │   │
+│  │                                                   │   │
+│  │  ┌─────────┐ ┌──────────┐ ┌────────────────┐     │   │
+│  │  │ Search  │ │ Filters  │ │ ResultsList    │     │   │
+│  │  │  Bar    │ │(Book/POV)│ │ → ResultItem   │     │   │
+│  │  └─────────┘ └──────────┘ │ → ContextPanel │     │   │
+│  │                           └────────────────┘     │   │
+│  │  ┌─────────┐ ┌──────────┐ ┌────────────────┐     │   │
+│  │  │ POV     │ │ Chapter  │ │ ThemeToggle    │     │   │
+│  │  │FilterBar│ │  Modal   │ │ (claro/escuro) │     │   │
+│  │  └─────────┘ └──────────┘ └────────────────┘     │   │
+│  └──────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────┘
+         │                           │
+         ▼                           ▼
+    API (Fastify)              Sentry / Plausible
+    (REST + FTS5)              (error/analytics)
 ```
 
-## Configuração
+### Padrões de Arquitetura
 
-Crie um arquivo `.env.local` com a URL da API:
+| Padrão | Onde | Por que |
+|--------|------|---------|
+| **SSR/CSR híbrido** | `Providers.tsx` | Layout inicial com SSR, busca com CSR (dinâmica) |
+| **Suspense boundary** | `Home()` → `<Suspense>` + `HomeContent` | Fallback de loading enquanto hidrata |
+| **URL-driven state** | `useSearchParams` + `useRouter.push` | Resultados são linkáveis e compartilháveis |
+| **Custom hooks** | `useSearch`, `useTheme` | Separa lógica de estado da apresentação |
+| **Componentes puros** | `SearchBar`, `Filters`, `ResultsList` | Props in, JSX out — testáveis e previsíveis |
+| **Renderização condicional** | `hasSearched` → mostra resultados | Evita flash de conteúdo vazio |
+| **Controlled forms** | SearchBar value + onChange | Estado centralizado no hook, não no DOM |
 
-```env
-NEXT_PUBLIC_API_URL=http://localhost:5000
+---
+
+## Fluxo de Dados
+
+```
+Usuário digita "Dracarys" ──▶ SearchBar onChange
+                                   │
+                                   ▼
+                            HomeContent: setQuery()
+                                   │
+                                   ▼
+                            executeSearch()
+                                   │
+                                   ▼
+                            useSearch: performSearch()
+                                   │
+                                   ▼
+                            services/search.ts: fetchApi()
+                                   │
+                                   ▼
+                            API /search?q=Dracarys
+                                   │
+                                   ▼
+                            response.json()
+                                   │
+                                   ▼
+                            setResults([...])
+                            setTotal(42)
+                                   │
+                                   ▼
+                            ResultsList renderiza
+                                   │
+                                   ├── ResultItem (snippet + metadados)
+                                   │
+                                   └── PovFilterBar atualiza
 ```
 
-## Scripts
+### Estado Sincronizado com URL
 
-```bash
-npm run dev      # Iniciar servidor de desenvolvimento
-npm run build   # Build de produção
-npm run start   # Iniciar servidor de produção
-npm run lint    # Verificar código
+```
+/search?q=Dracarys&book=3&povs=Daenerys
 ```
 
-## Funcionalidades
+O hook `useSearch` lê `searchParams` na inicialização e atualiza a URL via `router.push()` a cada busca. Isso garante:
 
-- Busca por texto em livros
-- Filtros por livro e personagem (POV)
-- Paginação com "load more"
-- Modal de visualização de capítulos
-- Theme toggle (claro/escuro)
-- Animações com Framer Motion
+- **Links compartilháveis**: copiar URL = copiar estado da busca
+- **Back/Forward nativos**: navegação do browser funciona
+- **Deep linking**: abrir URL com parâmetros já executa a busca (`useEffect` no mount)
 
-## Deploy
+---
 
-### Vercel (Recomendado)
+## Componentes
 
-1. Conecte o repositório à Vercel
-2. Defina o diretório raiz como `A-Procura-de-Gelo-e-Fogo-Frontend`
-3. Adicione a variável de ambiente:
-   - `NEXT_PUBLIC_API_URL=https://backend-url.com`
-4. Deploy automático a cada push na `main`
+### Árvore de Componentes
 
-```bash
-# Ou via CLI
-vercel --prod
+```
+<Providers>                          ← ThemeProvider + Navbar
+  <Suspense fallback={<Loader />}>
+    <HomeContent>                    ← Estado central, orquestração
+      <SearchBar />                  ← Input + botão de busca
+      <PovFilterBar />              ← Filtro rápido de personagens
+      <Filters />                   ← Filtro por livro + POV (após busca)
+      <ResultsList>                 ← Lista paginada
+        <ResultItem />              ← Card de resultado
+        <ContextPanel />            ← Parágrafos vizinhos (±3)
+      </ResultsList>
+      <Footer />                    ← Créditos
+    </HomeContent>
+  </Suspense>
+</Providers>
 ```
 
-### Docker
+### Responsabilidades
 
-```bash
-docker build -t search-frontend .
-docker run -p 3000:3000 \
-  -e NEXT_PUBLIC_API_URL=https://backend-url.com \
-  search-frontend
+| Componente | Responsabilidade | Estado |
+|------------|-----------------|--------|
+| `Providers` | Tema + Layout base + Navbar fixa | Nenhum (render prop) |
+| `HomeContent` | Orquestração, scroll, sugestões | `mounted`, `openIndex`, `shouldScroll` |
+| `SearchBar` | Input controlado + submit | `value` (controlled) |
+| `PovFilterBar` | Seleção rápida de POVs | `selectedPovs` (props) |
+| `Filters` | Select de livro + POV | `book`, `povs` (props) |
+| `ResultsList` | Renderização dos resultados + load more | `openIndex` (props) |
+| `ResultItem` | Card com snippet + metadados + clique | Nenhum (stateless) |
+| `ContextPanel` | Fetch de parágrafos vizinhos | `paragraphs`, `isLoading`, `error` |
+| `ChapterModal` | Modal de capítulo completo | `isOpen` (props) |
+
+### ContextPanel: Busca de Contexto
+
+Quando o usuário clica em um resultado, o `ContextPanel` busca **±3 parágrafos vizinhos** via `/context?book=&chapter=&index=` e exibe:
+
+1. Parágrafo anterior (tom)
+2. Parágrafo do match (destacado)
+3. Parágrafo seguinte (continuidade)
+
+Isso permite que o leitor entenda o contexto sem abrir o capítulo inteiro.
+
+---
+
+## Performance
+
+### Estratégias
+
+| Técnica | Implementação |
+|---------|--------------|
+| **Suspense + fallback** | Loader enquanto o componente hidrata |
+| **Animações otimizadas** | Framer Motion com `layout="position"` — sem reflow |
+| **CSS nativo** | Tailwind CSS 4 + variáveis CSS — zero runtime CSS-in-JS |
+| **Font loading** | Fontes estáticas, sem FOUT/FOIT |
+| **Code splitting** | Cada rota Next.js lazy-loads seus componentes |
+| **Bundle menor** | Lucide React com tree-shaking natural |
+
+### Otimizações de Renderização
+
+```tsx
+// ResultItem é memoizado implicitamente pelo map key único
+safeResults.map((result, i) => (
+  <ResultItem
+    key={`${result.book_number}-${result.chapter_number}-${result.paragraph_index}`}
+    // key único previne re-renderização desnecessária
+  />
+))
 ```
 
-### Railway
+---
 
-1. Conecte o repositório ao Railway
-2. Defina o diretório raiz como `A-Procura-de-Gelo-e-Fogo-Frontend`
-3. Adicione a variável de ambiente:
-   - `NEXT_PUBLIC_API_URL=https://backend-url.com`
+## Tematização
 
-### VPS com Docker Compose
+### Tema Claro / Escuro
 
-Veja `docker-compose.yml` na raiz do projeto para subir backend + frontend juntos.
+Implementado via **CSS custom properties** + **React Context**:
 
-## Analytics e Error Tracking
+```css
+:root {
+  --bg-primary: #f8f6f0;
+  --text-primary: #1a1a2e;
+  --accent: #8b0000;
+}
+
+[data-theme="dark"] {
+  --bg-primary: #0f0f1a;
+  --text-primary: #e8e6e3;
+  --accent: #c41e3a;
+}
+```
+
+O tema é persistido em `localStorage` e respeita a preferência do sistema (`prefers-color-scheme`).
+
+### Paleta
+
+| Cor | Claro | Escuro | Uso |
+|-----|-------|--------|-----|
+| Fundo | `#f8f6f0` (pergaminho) | `#0f0f1a` (noite) | Background principal |
+| Texto | `#1a1a2e` | `#e8e6e3` | Corpo do texto |
+| Acento | `#8b0000` (vermelho Targaryen) | `#c41e3a` | Links, destaques, POV |
+| Bordas | `rgba(0,0,0,0.1)` | `rgba(255,255,255,0.1)` | Separação sutil |
+
+---
+
+## Analytics & Error Tracking
 
 ### Plausible Analytics (opcional)
 
-Analytics leve, sem cookies, compatível com LGPD.
-
-1. Crie uma conta em [plausible.io](https://plausible.io)
-2. Adicione seu domínio (ex: `geloefogo.com`)
-3. Adicione ao `.env.local`:
-   ```env
-   NEXT_PUBLIC_PLAUSIBLE_DOMAIN=geloefogo.com
-   ```
-
-Para ver os dados:
-- Acesse o dashboard do Plausible em `plausible.io`
-- Veja visitantes, páginas mais vistas, fontes de tráfego, etc.
+- Eventos customizados: `search`, `filter`, `pov_click`
+- Sem cookies — compatível com LGPD
+- Dashboard para ver termos de busca mais populares
 
 ### Sentry (opcional)
 
-Rastreamento de erros em tempo real.
+- Captura de erros não tratados
+- Breadcrumbs de ação do usuário
+- Source maps para debug em produção
 
-1. Crie uma conta em [sentry.io](https://sentry.io)
-2. Crie um projeto Next.js
-3. Copie o DSN e adicione ao `.env.local`:
-   ```env
-   NEXT_PUBLIC_SENTRY_DSN=https://xxx@xxx.ingest.sentry.io/xxx
-   ```
-4. Instale o pacote: `npm install @sentry/nextjs`
-
-Para ver os erros:
-- Acesse o dashboard do Sentry em `sentry.io`
-- Veja stack traces, frequência de erros, sessões afetadas, etc.
-
-### Uso programático
+### Tracking Programático
 
 ```ts
 import { trackError, trackEvent } from "@/lib/tracking";
 
-// Track erro customizado
-trackError(err, { query: "lobos", book: "1" });
-
-// Track evento (Plausible)
 trackEvent("search", { query: "lobos", results: 42 });
+trackError(err, { query: "Dracarys" });
 ```
 
-Este projeto usa GitHub Actions para:
-- Rodar lint e build automaticamente em cada PR
-- Validar que o código está pronto para deploy
+---
 
-O workflow é disparado quando há mudanças em `A-Procura-de-Gelo-e-Fogo-Frontend/`.
+## Acessibilidade
+
+| Prática | Implementação |
+|---------|--------------|
+| **ARIA labels** | `aria-label` em cards de resultado |
+| **Keyboard navigation** | `tabIndex`, `onKeyDown` (Enter/Space) |
+| **Focus management** | Scroll automático para resultados após busca |
+| **Contraste** | Paleta com contraste WCAG AA+ |
+| **Semântica** | `article`, `button`, `footer` — HTML semântico |
+| **Motion reduzido** | `prefers-reduced-motion` respeitado via Framer Motion |
+
+---
+
+## Deploy & CI/CD
+
+### Vercel (Recomendado)
+
+```bash
+vercel --prod
+```
+
+- Deploy automático a cada push na `main`
+- Environment: `NEXT_PUBLIC_API_URL=https://backend-url.com`
+- Preview deployments para cada PR
+
+### GitHub Actions
+
+```yaml
+- npm ci
+- npm run lint
+- npm run build
+- Valida que o build não quebra antes do deploy
+```
+
+### Docker Compose (VPS)
+
+```yaml
+services:
+  frontend:
+    build: ./A-Procura-de-Gelo-e-Fogo-Frontend
+    ports: ["3000:3000"]
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:5000
+```
+
+---
+
+## Stack
+
+| Tecnologia | Versão | Função |
+|-----------|--------|--------|
+| **Next.js** | 16.2.6 | Framework SSR/SSG |
+| **React** | 19.2.4 | UI |
+| **Tailwind CSS** | 4 | Estilização utilitária |
+| **Framer Motion** | 12.38 | Animações declarativas |
+| **Radix UI** | — | Dialog, Select (acessíveis) |
+| **Lucide React** | 1.16 | Ícones |
+| **Sentry** | 10.53 | Error tracking |
+
+---
+
+> Projetado e desenvolvido por [FelipeAraujoBS](https://github.com/FelipeAraujoBS)
