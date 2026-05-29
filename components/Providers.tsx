@@ -3,6 +3,7 @@
 import { Suspense } from 'react';
 import { ThemeProvider } from '@/hooks/useTheme';
 import { Navbar } from '@/components/theme/Navbar';
+import { ChatWidget } from '@/components/chat/ChatWidget';
 import { HomeContent } from './HomeContent';
 import { Loader2 } from 'lucide-react';
 
@@ -17,6 +18,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <main className="pt-14">
         {children}
       </main>
+      <ChatWidget />
     </ThemeProvider>
   );
 }

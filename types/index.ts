@@ -1,3 +1,16 @@
+export interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  sources?: {
+    book_title: string;
+    chapter_title: string;
+    chapter_number: number;
+    text: string;
+  }[];
+  timestamp: number;
+}
+
 export interface SearchResult {
   book_number: number;
   book_title: string;
