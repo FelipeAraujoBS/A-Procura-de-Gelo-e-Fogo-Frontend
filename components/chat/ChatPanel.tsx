@@ -33,6 +33,31 @@ export function ChatPanel({ onClose }: { onClose: () => void }) {
     inputRef.current?.focus();
   }, []);
 
+  useEffect(() => {
+    const listEl = listRef.current;
+    if (!listEl) return;
+
+    const scrollToBottom = () => {
+      requestAnimationFrame(() => {
+        listEl.scrollTo({ top: listEl.scrollHeight, behavior: 'smooth' });
+      });
+    };
+
+    const observer = new ResizeObserver(() => {
+      scrollToBottom();
+    });
+    observer.observe(listEl);
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', scrollToBottom);
+    }
+
+    return () => {
+      observer.disconnect();
+      window.visualViewport?.removeEventListener('resize', scrollToBottom);
+    };
+  }, []);
+
   const handleSend = async () => {
     const text = input.trim();
     if (!text || isLoading) return;

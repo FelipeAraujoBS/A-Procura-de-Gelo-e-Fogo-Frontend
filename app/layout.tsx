@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
@@ -19,6 +19,15 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Uma Busca de Gelo e Fogo",
   description: "Explore personagens, batalhas, profecias e segredos escondido nas Crônicas de Gelo e Fogo.",
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+  interactiveWidget: 'resizes-visual',
 };
 
 export default function RootLayout({

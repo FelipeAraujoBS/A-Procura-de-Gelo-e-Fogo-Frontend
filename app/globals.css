@@ -862,6 +862,7 @@ input::placeholder, textarea::placeholder {
   right: 0;
   z-index: 95;
   height: 100vh;
+  height: 100dvh;
   width: 100%;
   max-width: 440px;
   transition: transform 0.3s ease, opacity 0.3s ease;
@@ -944,6 +945,7 @@ input::placeholder, textarea::placeholder {
 .chat-messages {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 16px 20px;
   display: flex;
   flex-direction: column;
@@ -989,6 +991,7 @@ input::placeholder, textarea::placeholder {
 .chat-bubble-text {
   margin: 0;
   white-space: pre-wrap;
+  overflow-wrap: break-word;
 }
 
 /* Loading */
@@ -1026,10 +1029,15 @@ input::placeholder, textarea::placeholder {
   display: flex;
   align-items: flex-start;
   gap: 4px;
+  min-width: 0;
   font-family: var(--font-sans);
   font-size: 11px;
   color: var(--text-meta);
   line-height: 1.4;
+}
+
+.chat-source-item span {
+  overflow-wrap: break-word;
 }
 
 .chat-source-arrow {
@@ -1041,6 +1049,7 @@ input::placeholder, textarea::placeholder {
 /* Input */
 .chat-input-area {
   padding: 12px 16px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid var(--border);
   flex-shrink: 0;
 }
@@ -1094,4 +1103,10 @@ input::placeholder, textarea::placeholder {
 .chat-send-btn:disabled {
   opacity: 0.35;
   cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .chat-input {
+    font-size: 16px;
+  }
 }
