@@ -16,7 +16,7 @@ interface UseSearchReturn {
   total: number;
   isLoading: boolean;
   hasSearched: boolean;
-  executeSearch: () => Promise<void>;
+  executeSearch: (overrides?: { book?: string; povs?: string[] }) => Promise<void>;
   loadMore: () => Promise<void>;
   hasMore: boolean;
 }
@@ -81,10 +81,12 @@ export function useSearch(): UseSearchReturn {
     }
   }, [offset]);
 
-  const executeSearch = useCallback(async () => {
+  const executeSearch = useCallback(async (overrides?: { book?: string; povs?: string[] }) => {
+    const b = overrides?.book !== undefined ? overrides.book : book;
+    const p = overrides?.povs !== undefined ? overrides.povs : povs;
     setOffset(0);
-    await performSearch(query, book, povs, true);
-    updateURL(query, book, povs);
+    await performSearch(query, b, p, true);
+    updateURL(query, b, p);
   }, [query, book, povs, performSearch, updateURL]);
 
   const loadMore = useCallback(async () => {

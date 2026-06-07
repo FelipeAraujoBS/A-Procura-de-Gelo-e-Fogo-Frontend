@@ -59,12 +59,15 @@ export function HomeContent() {
     }
   }, [hasSearched, results, shouldScroll]);
 
-  const handleSearch = (searchQuery?: string) => {
+  const handleSearch = (searchQuery?: string, bookOverride?: string, povsOverride?: string[]) => {
     const q = searchQuery || query;
     if (q.trim()) {
-      setQuery(q);
+      if (searchQuery) setQuery(q);
       setShouldScroll(true);
-      executeSearch();
+      const overrides: { book?: string; povs?: string[] } = {};
+      if (bookOverride !== undefined) overrides.book = bookOverride;
+      if (povsOverride !== undefined) overrides.povs = povsOverride;
+      executeSearch(Object.keys(overrides).length > 0 ? overrides : undefined);
     }
   };
 
@@ -126,7 +129,7 @@ export function HomeContent() {
             onPovChange={(newPovs) => {
               setPovs(newPovs);
               if (query && hasSearched) {
-                handleSearch();
+                handleSearch(undefined, undefined, newPovs);
               }
             }}
           />
@@ -155,14 +158,16 @@ export function HomeContent() {
               book={book}
               onBookChange={(value) => {
                 setBook(value);
-                if (query) handleSearch();
               }}
               selectedPovs={povs}
               onPovChange={(value) => {
                 setPovs(value);
-                if (query) handleSearch();
+                if (query) handleSearch(undefined, undefined, value);
               }}
-              onSearch={() => handleSearch()}
+              onSearch={(bookOverride) => {
+                if (bookOverride !== undefined) setBook(bookOverride);
+                handleSearch(undefined, bookOverride);
+              }}
             />
           </div>
         )}

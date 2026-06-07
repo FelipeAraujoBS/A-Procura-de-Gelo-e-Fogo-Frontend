@@ -45,7 +45,7 @@ interface FiltersProps {
   onBookChange: (book: string) => void;
   selectedPovs: string[];
   onPovChange: (povs: string[]) => void;
-  onSearch: () => void;
+  onSearch: (book?: string) => void;
 }
 
 function BookFilter({ 
@@ -55,7 +55,7 @@ function BookFilter({
 }: { 
   selected: string; 
   onChange: (book: string) => void;
-  onSearch: () => void;
+  onSearch: (book: string) => void;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -79,7 +79,7 @@ function BookFilter({
               onClick={() => {
                 onChange('');
                 setOpen(false);
-                onSearch();
+                onSearch('');
               }}
               className="w-full text-left px-3 py-1.5 text-[13px] text-[var(--text-primary)] hover:bg-[var(--accent-light)] rounded"
             >
@@ -92,7 +92,7 @@ function BookFilter({
               onClick={() => {
                 onChange(b.id);
                 setOpen(false);
-                onSearch();
+                onSearch(b.id);
               }}
               className="w-full text-left px-3 py-2 text-[13px] text-[var(--text-primary)] hover:bg-[var(--accent-light)]"
               style={{
@@ -219,7 +219,7 @@ export function Filters({
       <BookFilter 
         selected={book} 
         onChange={onBookChange} 
-        onSearch={onSearch}
+        onSearch={(b) => onSearch(b)}
       />
 
       <PovFilter 
