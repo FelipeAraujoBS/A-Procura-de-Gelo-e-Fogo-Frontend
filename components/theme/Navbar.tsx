@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
+import { DonateButton } from "@/components/donate/DonateButton";
 
 export function Navbar() {
   return (
@@ -12,7 +13,10 @@ export function Navbar() {
       >
         Gelo & Fogo
       </Link>
-      <ThemeToggle />
+      <div className="flex items-center gap-1">
+        <DonateButton />
+        <ThemeToggle />
+      </div>
     </header>
   );
 }
