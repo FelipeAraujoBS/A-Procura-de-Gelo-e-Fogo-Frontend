@@ -15,6 +15,7 @@ COPY next.config.ts ./
 COPY tsconfig.json ./
 COPY postcss.config.mjs ./
 COPY app ./app
+COPY assets ./assets
 COPY components ./components
 COPY hooks ./hooks
 COPY lib ./lib
