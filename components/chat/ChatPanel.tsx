@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { X, Send, Loader2, BookOpen, ChevronRight } from 'lucide-react';
 import type { ChatMessage } from '@/types';
 import { sendChatMessage } from '@/services/chat';
@@ -10,16 +11,18 @@ function nextId() {
   return `msg_${++messageId}_${Date.now()}`;
 }
 
+const INITIAL_MESSAGES: ChatMessage[] = [
+  {
+    id: 'welcome',
+    role: 'assistant',
+    content:
+      'Bem-vindo ao Arquivo dos Meistres. Pergunte-me sobre personagens, batalhas, profecias ou qualquer passagem das Crônicas de Gelo e Fogo.',
+    timestamp: 0,
+  },
+];
+
 export function ChatPanel({ onClose }: { onClose: () => void }) {
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: 'welcome',
-      role: 'assistant',
-      content:
-        'Bem-vindo ao Arquivo dos Meistres. Pergunte-me sobre personagens, batalhas, profecias ou qualquer passagem das Crônicas de Gelo e Fogo.',
-      timestamp: Date.now(),
-    },
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
@@ -119,7 +122,13 @@ export function ChatPanel({ onClose }: { onClose: () => void }) {
       {/* Messages */}
       <div ref={listRef} className="chat-messages">
         {messages.map((msg) => (
-          <div key={msg.id} className={`chat-msg ${msg.role === 'user' ? 'chat-msg-user' : 'chat-msg-assistant'}`}>
+          <motion.div
+            key={msg.id}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className={`chat-msg ${msg.role === 'user' ? 'chat-msg-user' : 'chat-msg-assistant'}`}
+          >
             <div className={`chat-bubble ${msg.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-assistant'}`}>
               <p className="chat-bubble-text">{msg.content}</p>
             </div>
@@ -138,17 +147,21 @@ export function ChatPanel({ onClose }: { onClose: () => void }) {
                 ))}
               </div>
             )}
-          </div>
+          </motion.div>
         ))}
         {isLoading && (
-          <div className="chat-msg chat-msg-assistant">
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="chat-msg chat-msg-assistant"
+          >
             <div className="chat-bubble chat-bubble-assistant">
               <div className="chat-loading">
-                <Loader2 size={14} className="animate-spin" />
+                <Loader2 size={14} className="animate-spin text-accent" />
                 <span>Consultando os pergaminhos...</span>
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
       </div>
 
@@ -165,14 +178,15 @@ export function ChatPanel({ onClose }: { onClose: () => void }) {
             className="chat-input"
             disabled={isLoading}
           />
-          <button
+          <motion.button
+            whileTap={{ scale: 0.92 }}
             onClick={handleSend}
             disabled={!input.trim() || isLoading}
             className="chat-send-btn"
             aria-label="Enviar"
           >
             <Send size={15} />
-          </button>
+          </motion.button>
         </div>
       </div>
     </div>

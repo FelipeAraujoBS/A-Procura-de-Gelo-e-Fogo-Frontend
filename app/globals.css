@@ -290,6 +290,11 @@ input::placeholder, textarea::placeholder {
   transform: translateY(-1px);
 }
 
+.suggestion-chip:active {
+  transform: scale(0.97);
+  transition: transform 0.08s ease;
+}
+
 /* Filters Section */
 .filters-section {
   border-top: 1px solid var(--border);
@@ -392,6 +397,11 @@ input::placeholder, textarea::placeholder {
 .pov-chip.selected:hover {
   background: var(--accent-dim);
   color: var(--surface);
+}
+
+.pov-chip:active {
+  transform: scale(0.97);
+  transition: transform 0.08s ease;
 }
 
 .pov-chip-name {
@@ -607,12 +617,12 @@ input::placeholder, textarea::placeholder {
   border-left: 2px solid var(--border-soft);
 }
 
-/* Current paragraph - main focus */
+/* Current paragraph - main focus (editorial highlight without side-tab slop) */
 .context-main {
   background: var(--accent-light);
-  padding: 20px 20px 20px 24px;
-  border-left: 3px solid var(--accent);
-  border-radius: 0 8px 8px 0;
+  padding: 20px 24px;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px var(--border-soft);
 }
 
 .context-text {
@@ -1108,5 +1118,17 @@ input::placeholder, textarea::placeholder {
 @media (max-width: 640px) {
   .chat-input {
     font-size: 16px;
+  }
+}
+
+/* Accessibility: respect user preferences for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { MessageCircle, X } from 'lucide-react';
 import { ChatPanel } from './ChatPanel';
 
@@ -110,7 +111,10 @@ export function ChatWidget() {
       </div>
 
       {/* FAB */}
-      <button
+      <motion.button
+        whileHover={{ scale: 1.04, y: -2 }}
+        whileTap={{ scale: 0.95 }}
+        transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
         onClick={handleToggle}
         className={`chat-fab ${isOpen ? 'chat-fab-open' : ''}`}
         aria-label={isOpen ? 'Fechar' : 'Pergunte aos Meistres'}
@@ -118,7 +122,7 @@ export function ChatWidget() {
       >
         {isOpen ? <X size={20} /> : <MessageCircle size={20} />}
         {!isOpen && <span className="chat-fab-label">Pergunte aos Meistres</span>}
-      </button>
+      </motion.button>
     </>
   );
 }

@@ -100,7 +100,6 @@ export function HomeContent() {
       <div className="main-container">
         {/* Header Section */}
         <div className="header-section">
-          <div className="eyebrow">Arquivo dos Meistres</div>
           <h1 className="main-title">UMA BUSCA DE GELO E FOGO</h1>
           <p className="supporting-text">
             Explore cada palavra das Crônicas de Gelo e Fogo. Pesquise

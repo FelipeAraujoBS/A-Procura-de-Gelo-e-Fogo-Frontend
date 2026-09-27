@@ -20,15 +20,18 @@ const BOOK_NAMES: Record<number, string> = {
 export function ResultCard({ result, onClick, index }: ResultCardProps) {
   return (
     <motion.article
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.05 }}
+      whileHover={{ y: -2, transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
+      whileTap={{ scale: 0.995 }}
+      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1], delay: Math.min(index * 0.035, 0.25) }}
       onClick={onClick}
-      className="group relative p-6 bg-surface border border-borders/50 rounded-lg cursor-pointer hover:border-accent/50 hover:bg-borders/20 transition-all duration-300"
+      className="group relative p-6 bg-surface border border-borders/50 rounded-lg cursor-pointer hover:border-accent/40 hover:shadow-lg hover:shadow-black/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 transition-[border-color,box-shadow] duration-200"
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
           onClick();
         }
       }}
@@ -40,15 +43,17 @@ export function ResultCard({ result, onClick, index }: ResultCardProps) {
           dangerouslySetInnerHTML={{ __html: result.snippet }}
         />
         
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted font-body pt-2 border-t border-borders/30">
-          <span className="text-accent font-medium">
-            — {result.chapter_title}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs sm:text-sm text-muted font-body pt-2 border-t border-borders/30">
+          <span className="text-accent font-semibold tracking-wide">
+            POV: {result.pov || result.chapter_title}
           </span>
-          <span className="text-muted/60">
+          <span className="text-muted/40">•</span>
+          <span className="text-muted/80 font-medium">
             {BOOK_NAMES[result.book_number] || result.book_title}
           </span>
+          <span className="text-muted/40">•</span>
           <span className="text-muted/60">
-            Capítulo {result.chapter_number}: {result.chapter_title}
+            Capítulo {result.chapter_number} ({result.chapter_title})
           </span>
         </div>
       </div>
